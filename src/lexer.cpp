@@ -53,7 +53,8 @@ namespace cap {
                       | character
                       | identifier
                       | float_number
-                      | integer_number;
+                      | integer_number
+        ;
 
 
     static auto lexer = *(whitespace | token);
