@@ -24,6 +24,7 @@ namespace cap {
         AT_SIGN,
         NUMBER_SIGN,
         DOLLAR_SIGN,
+        PERCENT,
         CARET,
         AMBERSAND,
         STAR,
@@ -58,7 +59,7 @@ namespace cap {
     struct Token {
         TOKEN token;
         Position position;
-        std::string content;
+        std::string_view content;
     };
 
 
