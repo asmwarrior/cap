@@ -28,9 +28,20 @@ namespace cap {
     static auto type_double = terminal(TOKEN::DOUBLE) == AST::TYPE_DOUBLE;
 
 
-    static auto typename_ = type_void
-                          | type_int
-                          | type_double;
+    static auto type_identifier = terminal(TOKEN::IDENTIFIER) == AST::TYPE_IDENTIFIER;
+
+
+    static auto type_ptr_base_type = type_void
+                                   | type_int
+                                   | type_double
+                                   | type_identifier;
+
+
+    static rule type_ptr = (type_ptr >> terminal(TOKEN::STAR)) == AST::TYPE_PTR
+                         | type_ptr_base_type;
+
+
+    static auto typename_ = type_ptr;
 
 
     static auto enum_member = (name) == AST::ENUM_MEMBER; //TODO expression
@@ -106,7 +117,7 @@ namespace cap {
         while (auto elem = pop_node_opt<T>(it, stack, tag)) {
             result.push_back(elem);
         }
-        return result;
+        return {result.rbegin(), result.rend()};
     }
 
 
@@ -122,6 +133,24 @@ namespace cap {
 
     static void create_ast_type_double(const ParseIterator& it, ASTNodeStack& stack) {
         stack.push_back(std::make_shared<ASTTypeDouble>());
+    }
+
+
+    static void create_ast_type_identifier(const ParseIterator& it, ASTNodeStack& stack) {
+        std::shared_ptr<ASTTypeIdentifier> result = std::make_shared<ASTTypeIdentifier>();
+
+        result->name = it->begin->content;
+
+        stack.push_back(result);
+    }
+
+
+    static void create_ast_type_ptr(const ParseIterator& it, ASTNodeStack& stack) {
+        std::shared_ptr<ASTTypePtr> result = std::make_shared<ASTTypePtr>();
+
+        result->baseType = pop_node<ASTTypename>(it, stack, "base type");
+
+        stack.push_back(result);
     }
 
 
@@ -185,43 +214,48 @@ namespace cap {
         //parse 
         const bool ok = parse(grammar, pc);
 
-        //ast nod stack
-        ASTNodeStack ast_stack;
-
         //process matches
         try {
             for (auto it = pc.matches.begin(); it != pc.matches.end(); ++it) {
                 switch (it->tag) {
                     case AST::TYPE_VOID:
-                        create_ast_type_void(it, ast_stack);
+                        create_ast_type_void(it, output);
                         break;
 
                     case AST::TYPE_INT:
-                        create_ast_type_int(it, ast_stack);
+                        create_ast_type_int(it, output);
                         break;
 
                     case AST::TYPE_DOUBLE:
-                        create_ast_type_double(it, ast_stack);
+                        create_ast_type_double(it, output);
+                        break;
+
+                    case AST::TYPE_IDENTIFIER:
+                        create_ast_type_identifier(it, output);
+                        break;
+
+                    case AST::TYPE_PTR:
+                        create_ast_type_ptr(it, output);
                         break;
 
                     case AST::NAME:
-                        create_ast_name(it, ast_stack); 
+                        create_ast_name(it, output);
                         break;
 
                     case AST::ENUM_MEMBER: 
-                        create_ast_enum_member(it, ast_stack); 
+                        create_ast_enum_member(it, output);
                         break;
 
                     case AST::ENUM: 
-                        create_ast_enum(it, ast_stack); 
+                        create_ast_enum(it, output);
                         break;
 
                     case AST::STRUCT_MEMBER:
-                        create_ast_struct_member(it, ast_stack);
+                        create_ast_struct_member(it, output);
                         break;
 
                     case AST::STRUCT:
-                        create_ast_struct(it, ast_stack);
+                        create_ast_struct(it, output);
                         break;
 
                     default: 

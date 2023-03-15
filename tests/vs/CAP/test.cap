@@ -1,3 +1,4 @@
+/*
 enum TestEnum1 {
 }
 
@@ -20,4 +21,10 @@ struct Bar {
 struct Point {
 	int x;
 	int y;
+}
+*/
+
+struct Location {
+	//Point position;
+	Point* data;
 }

@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <ostream>
 #include "lexer.hpp"
 
 
@@ -21,6 +22,8 @@ namespace cap {
         TYPE_VOID,
         TYPE_INT,
         TYPE_DOUBLE,
+        TYPE_IDENTIFIER,
+        TYPE_PTR,
         NAME,
         ENUM_MEMBER,
         ENUM,
@@ -44,6 +47,9 @@ namespace cap {
 
         //virtual destructor due to inheritance.
         virtual ~ASTNode() {}
+
+        //print this ast node into the given stream
+        virtual void print(size_t depth, std::basic_ostream<char>& stream) const = 0;
     };
 
 
@@ -59,6 +65,10 @@ namespace cap {
     struct ASTName : ASTNode {
     public:
         std::string value;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << value;
+        }
     };
 
 
@@ -73,6 +83,9 @@ namespace cap {
      * Void type.
      */
     struct ASTTypeVoid : ASTTypename {
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "type<void>";
+        }
     };
 
 
@@ -80,6 +93,9 @@ namespace cap {
      * Int type.
      */
     struct ASTTypeInt : public ASTTypename {
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "type<int>";
+        }
     };
 
 
@@ -87,6 +103,35 @@ namespace cap {
      * Double type.
      */
     struct ASTTypeDouble : public ASTTypename {
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "type<double>";
+        }
+    };
+
+
+    /**
+     * Identifier type.
+     */
+    struct ASTTypeIdentifier : public ASTTypename {
+        std::string name;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "type_identifier<" << name << '>';
+        }
+    };
+
+
+    /**
+     * Ptr type.
+     */
+    struct ASTTypePtr : public ASTTypename {
+        std::shared_ptr<ASTTypename> baseType;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "type_ptr<";
+            baseType->print(depth, stream);
+            stream << '>';
+        }
     };
 
 
@@ -96,6 +141,10 @@ namespace cap {
     struct ASTEnumMember : ASTNode {
         //name 
         std::string name;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "enum_member<"  << name << '>';
+        }
     };
 
 
@@ -108,6 +157,15 @@ namespace cap {
 
         //members
         std::vector<std::shared_ptr<ASTEnumMember>> members;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "enum " << name << "{\n";
+            for (const auto& member : members) {
+                stream << std::string(depth, ' ');
+                member->print(depth, stream);
+            }
+            stream << "}\n";
+        }
     };
 
 
@@ -120,6 +178,12 @@ namespace cap {
 
         //name 
         std::string name;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "struct_member<";
+            typename_->print(depth, stream);
+            stream << ' ' << name << ">; \n";
+        }
     };
 
 
@@ -132,6 +196,15 @@ namespace cap {
 
         //members
         std::vector<std::shared_ptr<ASTStructMember>> members;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "struct " << name << " {\n";
+            for (const auto& member : members) {
+                stream << std::string(depth, ' ');
+                member->print(depth, stream);
+            }
+            stream << "}\n";
+        }
     };
 
 

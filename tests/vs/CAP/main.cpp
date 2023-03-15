@@ -21,5 +21,10 @@ int main() {
     std::vector<ASTNodePtr> ast;
     parse(tokens, ast, errors);
 
+    for (const ASTNodePtr& astNode : ast) {
+        astNode->print(4, std::cout);
+    }
+
+    system("pause");
     return 0;
 }
