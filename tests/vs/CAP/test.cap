@@ -1,18 +1,23 @@
-123
+enum TestEnum1 {
+}
 
-123.56
+enum TestEnum2 {
+	FOO
+}
 
-theQuickBrown_fox
+enum TestEnum3 {
+	FOO,
+	BAR
+}
 
-/*
-	This is a block comment.
- */
+struct Foo {
+}
 
- //This is a line comment.
+struct Bar {
+	int x;
+}
 
-"aaaaa"
-
-'c'
-
-~`!@#$%^&*()-_=+[{]}]\;:'"<,>.?/
-
+struct Point {
+	int x;
+	int y;
+}

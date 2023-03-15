@@ -28,6 +28,13 @@ namespace cap {
                            | line_comment;
 
 
+    static auto keyword_double = terminal("double") == TOKEN::DOUBLE;
+    static auto keyword_struct = terminal("struct") == TOKEN::STRUCT;
+    static auto keyword_enum = terminal("enum") == TOKEN::ENUM;
+    static auto keyword_void = terminal("void") == TOKEN::VOID;
+    static auto keyword_int = terminal("int") == TOKEN::INT;
+
+
     static auto string = (terminal('"') >> *(!terminal('"') >> range(0, 255)) >> terminal('"')) == TOKEN::STRING;
 
     
@@ -83,7 +90,12 @@ namespace cap {
     static auto slash                  = (terminal('/')) == TOKEN::SLASH;
 
 
-    static auto token = string
+    static auto token = keyword_double
+                      | keyword_struct
+                      | keyword_enum
+                      | keyword_void
+                      | keyword_int
+                      | string
                       | character
                       | identifier
                       | float_number
@@ -127,11 +139,10 @@ namespace cap {
 
     //tokenize
     void tokenize(const std::string& input, std::vector<Token>& output, std::vector<Error>& errors) {
-        //reset the output variables
+        //reset the output variable
         output.clear();
-        errors.clear();
 
-        //create parse context
+        //create the parse context
         auto pc = parse_context(input);
 
         //parse 

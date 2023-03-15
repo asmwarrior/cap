@@ -13,6 +13,11 @@ namespace cap {
      * Token types.
      */
     enum class TOKEN {
+        DOUBLE,
+        STRUCT,
+        ENUM,
+        VOID,
+        INT,
         STRING,
         CHARACTER,
         IDENTIFIER,
@@ -60,6 +65,10 @@ namespace cap {
         TOKEN token;
         Position position;
         std::string_view content;
+
+        bool operator == (const TOKEN& other) const {
+            return token == other;
+        }
     };
 
 
