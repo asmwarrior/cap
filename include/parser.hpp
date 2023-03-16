@@ -20,6 +20,7 @@ namespace cap {
      */
     enum class AST {
         TYPE_VOID,
+        TYPE_CHAR,
         TYPE_INT,
         TYPE_DOUBLE,
         TYPE_IDENTIFIER,
@@ -85,6 +86,16 @@ namespace cap {
     struct ASTTypeVoid : ASTTypename {
         void print(size_t depth, std::basic_ostream<char>& stream) const override {
             stream << "type<void>";
+        }
+    };
+
+
+    /**
+     * Char type.
+     */
+    struct ASTTypeChar : public ASTTypename {
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "type<char>";
         }
     };
 

@@ -25,6 +25,7 @@ struct Point {
 */
 
 struct Location {
+	char* name;
 	//Point position;
 	Point* data;
 }

@@ -15,6 +15,7 @@ namespace cap {
     enum class TOKEN {
         DOUBLE,
         STRUCT,
+        CHAR,
         ENUM,
         VOID,
         INT,

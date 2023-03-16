@@ -30,6 +30,7 @@ namespace cap {
 
     static auto keyword_double = terminal("double") == TOKEN::DOUBLE;
     static auto keyword_struct = terminal("struct") == TOKEN::STRUCT;
+    static auto keyword_char = terminal("char") == TOKEN::CHAR;
     static auto keyword_enum = terminal("enum") == TOKEN::ENUM;
     static auto keyword_void = terminal("void") == TOKEN::VOID;
     static auto keyword_int = terminal("int") == TOKEN::INT;
@@ -92,6 +93,7 @@ namespace cap {
 
     static auto token = keyword_double
                       | keyword_struct
+                      | keyword_char
                       | keyword_enum
                       | keyword_void
                       | keyword_int

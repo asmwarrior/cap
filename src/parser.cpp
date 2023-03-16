@@ -19,6 +19,9 @@ namespace cap {
     static auto name = terminal(TOKEN::IDENTIFIER) == AST::NAME;
 
 
+    static auto type_char = terminal(TOKEN::CHAR) == AST::TYPE_CHAR;
+
+
     static auto type_void = terminal(TOKEN::VOID) == AST::TYPE_VOID;
 
 
@@ -31,10 +34,11 @@ namespace cap {
     static auto type_identifier = terminal(TOKEN::IDENTIFIER) == AST::TYPE_IDENTIFIER;
 
 
-    static auto type_ptr_base_type = type_void
-                                   | type_int
+    static auto type_ptr_base_type = type_identifier
                                    | type_double
-                                   | type_identifier;
+                                   | type_char
+                                   | type_void
+                                   | type_int;
 
 
     static rule type_ptr = (type_ptr >> terminal(TOKEN::STAR)) == AST::TYPE_PTR
@@ -123,6 +127,11 @@ namespace cap {
 
     static void create_ast_type_void(const ParseIterator& it, ASTNodeStack& stack) {
         stack.push_back(std::make_shared<ASTTypeVoid>());
+    }
+
+
+    static void create_ast_type_char(const ParseIterator& it, ASTNodeStack& stack) {
+        stack.push_back(std::make_shared<ASTTypeChar>());
     }
 
 
@@ -220,6 +229,10 @@ namespace cap {
                 switch (it->tag) {
                     case AST::TYPE_VOID:
                         create_ast_type_void(it, output);
+                        break;
+
+                    case AST::TYPE_CHAR:
+                        create_ast_type_char(it, output);
                         break;
 
                     case AST::TYPE_INT:
