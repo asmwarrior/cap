@@ -28,6 +28,7 @@ namespace cap {
                            | line_comment;
 
 
+    static auto keyword_typedef = terminal("typedef") == TOKEN::TYPEDEF;
     static auto keyword_double = terminal("double") == TOKEN::DOUBLE;
     static auto keyword_struct = terminal("struct") == TOKEN::STRUCT;
     static auto keyword_char = terminal("char") == TOKEN::CHAR;
@@ -91,7 +92,8 @@ namespace cap {
     static auto slash                  = (terminal('/')) == TOKEN::SLASH;
 
 
-    static auto token = keyword_double
+    static auto token = keyword_typedef
+                      | keyword_double
                       | keyword_struct
                       | keyword_char
                       | keyword_enum

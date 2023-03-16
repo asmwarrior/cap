@@ -70,8 +70,14 @@ namespace cap {
                           terminal(TOKEN::CLOSING_CURLY_BRACKET)) == AST::STRUCT;
 
 
+    static auto typedef_ = (terminal(TOKEN::TYPEDEF) >>
+                           typename_ >>
+                           name) == AST::TYPEDEF;
+
+
     static auto declaration = enum_
-                            | struct_;
+                            | struct_
+                            | typedef_;
 
 
     static auto grammar = *declaration;
@@ -213,6 +219,16 @@ namespace cap {
     }
 
 
+    static void create_ast_typedef(const ParseIterator& it, ASTNodeStack& stack) {
+        std::shared_ptr<ASTTypedef> result{ std::make_shared<ASTTypedef>() };
+
+        result->name = pop_node<ASTName>(it, stack, "typedef name")->value;
+        result->type = pop_node<ASTTypename>(it, stack, "typedef type");
+
+        stack.push_back(result);
+    }
+
+
     void parse(const std::vector<Token>& input, std::vector<ASTNodePtr>& output, std::vector<Error>& errors) {
         //reset the output variable
         output.clear();
@@ -271,7 +287,11 @@ namespace cap {
                         create_ast_struct(it, output);
                         break;
 
-                    default: 
+                    case AST::TYPEDEF:
+                        create_ast_typedef(it, output);
+                        break;
+
+                    default:
                         throw Error{ it->begin->position, "Invalid declaration" };
 
                 }

@@ -29,7 +29,8 @@ namespace cap {
         ENUM_MEMBER,
         ENUM,
         STRUCT_MEMBER,
-        STRUCT
+        STRUCT,
+        TYPEDEF
     };
 
 
@@ -215,6 +216,24 @@ namespace cap {
                 member->print(depth, stream);
             }
             stream << "}\n";
+        }
+    };
+
+
+    /**
+     * Typedef.
+     */
+    struct ASTTypedef : public ASTNode {
+        //name 
+        std::string name;
+
+        //type
+        std::shared_ptr<ASTTypename> type;
+
+        void print(size_t depth, std::basic_ostream<char>& stream) const override {
+            stream << "typedef ";
+            type->print(depth, stream);
+            stream << ' ' << name << "; \n";
         }
     };
 

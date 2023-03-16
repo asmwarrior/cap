@@ -13,6 +13,7 @@ namespace cap {
      * Token types.
      */
     enum class TOKEN {
+        TYPEDEF,
         DOUBLE,
         STRUCT,
         CHAR,

@@ -22,10 +22,12 @@ struct Point {
 	int x;
 	int y;
 }
-*/
 
 struct Location {
 	char* name;
 	//Point position;
 	Point* data;
 }
+*/
+
+typedef char* string;
